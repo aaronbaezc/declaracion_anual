@@ -1,4 +1,5 @@
 import os
+import ctypes
 import sys
 from datetime import datetime 
 from decimal import Decimal
@@ -24,6 +25,9 @@ ANCHO_COL_PERCEPCIONES = 15
 ANCHO_COL_RETENCIONES = 15
 ANCHO_COL_EXENTO = 15
 
+def enableWindowsConsole():
+    kernel32 = ctypes.windll.kernel32
+    kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
 def encabezados():
     encabezado_fecha = 'Fecha'.ljust(ANCHO_COL_FECHA)
@@ -46,6 +50,9 @@ def totales(total_percepciones, total_retenciones, total_exento):
     print()
 
 def main():
+
+    enableWindowsConsole()
+
     ruta_xmls = sys.argv[1] if len(sys.argv) > 1 else 0 
     anio = sys.argv[2] if len(sys.argv) > 2 else 0 
 
@@ -65,7 +72,7 @@ def main():
         if anio != 0 and not xmlFile.startswith(anio):
             continue
 
-        tree = ET.parse('./xml/' + xmlFile)
+        tree = ET.parse(ruta_xmls + xmlFile)
         root = tree.getroot()
 
         fecha_cadena = root.attrib['Fecha']
